@@ -7,7 +7,13 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Switch
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import net.harutiro.campingsensingwear.Adapter.SensorItemRViewAdapter
+import net.harutiro.campingsensingwear.Entity.SensorItemDataClass
 import net.harutiro.campingsensingwear.Usecase.SensorUsecase
 import net.harutiro.campingsensingwear.Utils.PermissionUtils
 import net.harutiro.campingsensingwear.databinding.ActivityMainBinding
@@ -35,6 +41,37 @@ class MainActivity : Activity() , SensorEventListener {
                 sensorUsecase.stop(this)
             }
         }
+
+        val rView = findViewById<RecyclerView>(R.id.sensorItemRView)
+        val adapter = SensorItemRViewAdapter(this, object: SensorItemRViewAdapter.OnItemClickListner{
+            override fun onItemClick(item: SensorItemDataClass) {
+                Log.d("MainActivity","${item.date}button押した。")
+            }
+        })
+        rView.layoutManager = LinearLayoutManager(this)
+        rView.adapter = adapter
+
+        adapter.setList(
+            mutableListOf(
+                SensorItemDataClass(
+                    fileName = "hogehoge",
+                    filePath = "1234",
+                    date = "2022/01/02"
+                ),
+                SensorItemDataClass(
+                    fileName = "hogehoge",
+                    filePath = "1234",
+                    date = "2022/02/03"
+                ),
+                SensorItemDataClass(
+                    fileName = "hogehoge",
+                    filePath = "1234",
+                    date = "2022/03/04"
+                )
+
+            )
+        )
+
 
     }
 
