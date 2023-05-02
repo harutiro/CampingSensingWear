@@ -1,16 +1,13 @@
 package net.harutiro.campingsensingwear.Usecase
 
-import android.app.Application
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.provider.ContactsContract.Data
 import android.util.Log
-import androidx.core.content.ContextCompat.getSystemService
-import com.google.android.gms.common.util.DataUtils
 import net.harutiro.campingsensingwear.Entity.AccDataClass
+import net.harutiro.campingsensingwear.Entity.SensorItemDataClass
 import net.harutiro.campingsensingwear.Utils.ApiResult
 import net.harutiro.campingsensingwear.Utils.DateUtils
 import net.harutiro.campingsensingwear.Utils.OtherFileStorage
@@ -25,10 +22,12 @@ class SensorUsecase () {
     var otherFileStorage : OtherFileStorage? = null
     var dateUtils = DateUtils()
     val outputTextUsecase = OutputTextUsecase()
+    var sensorDBUsecase :SensorDBUsecase? = null
+
 
     var date = ""
 
-    fun init(context: Context , binding: ActivityMainBinding){
+    fun init(context: Context, binding: ActivityMainBinding, sensorDBUsecase: SensorDBUsecase){
         sensorManager = context.getSystemService(Context.SENSOR_SERVICE)!! as SensorManager
         accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
 
@@ -38,7 +37,7 @@ class SensorUsecase () {
 
         date = dateUtils.getNowDate().toString()
 
-
+        this.sensorDBUsecase = sensorDBUsecase
     }
 
     fun start(sensorEventListener: SensorEventListener){
@@ -49,23 +48,17 @@ class SensorUsecase () {
         sensorManager.unregisterListener(sensorEventListener)
         otherFileStorage?.close(date)
 
-        val folderName = "makino"
-        val filePath = otherFileStorage?.finalPath.toString()
-        val fileName = "testData.csv"
-        val postData = PostData(fileName= fileName, filePath= filePath, folderName=folderName)
-        postData.run(callback = object : ApiResult {
+        val item = SensorItemDataClass(
+            id = 0,
+            filePath = otherFileStorage?.finalPath.toString(),
+            fileName = "${dateUtils.getNowDate().toString()}_PixelWache.csv",
+            date = dateUtils.getNowDate().toString()
+        )
 
-            // アップロード完了時の処理
-            override fun onSuccess(res: String) {
-                Log.d(TAG,res)
-            }
+        sensorDBUsecase?.insert(item)
 
-            // アップロード失敗時の処理
-            override fun onError(res: String?) {
-                Log.d(TAG,res.toString())
-            }
-        })
-
+        //ここでは直接送らないようにする
+//        webDavPostUsecase.post(otherFileStorage?.finalPath.toString())
 
     }
 

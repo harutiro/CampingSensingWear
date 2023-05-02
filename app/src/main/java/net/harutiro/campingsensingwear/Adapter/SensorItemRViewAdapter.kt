@@ -33,6 +33,8 @@ class SensorItemRViewAdapter(private val context: Context, private val listener:
         holder.sendButton.setOnClickListener {
             listener.onItemClick(item)
         }
+
+        holder.sendButton.text = item.date
     }
 
     //リストの要素数を返すメソッド

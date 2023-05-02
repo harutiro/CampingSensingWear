@@ -28,7 +28,12 @@ class SensorDBUsecase {
     }
 
     fun insert(item:SensorItemDataClass){
-        sensorItemDao.insert(item)
+        val a = sensorItemDao.insert(item).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { Log.d("User", "INSERT 成功")},
+                { e -> Log.e("User", "INSERT 失敗", e) }
+            )
     }
 
     fun getAll(func:(List<SensorItemDataClass>) -> Unit){
