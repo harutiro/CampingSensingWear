@@ -12,8 +12,15 @@ import android.widget.Switch
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.reactivex.Completable
+import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.harutiro.campingsensingwear.Adapter.SensorItemRViewAdapter
 import net.harutiro.campingsensingwear.Entity.SensorItemDataClass
+import net.harutiro.campingsensingwear.Usecase.SensorDBUsecase
 import net.harutiro.campingsensingwear.Usecase.SensorUsecase
 import net.harutiro.campingsensingwear.Utils.PermissionUtils
 import net.harutiro.campingsensingwear.databinding.ActivityMainBinding
@@ -29,6 +36,9 @@ class MainActivity : Activity() , SensorEventListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val sensorDBUsecase = SensorDBUsecase()
+        sensorDBUsecase.init(this)
+
         val permissionUtils = PermissionUtils()
         permissionUtils.requestPermissions(this,this)
 
@@ -42,6 +52,7 @@ class MainActivity : Activity() , SensorEventListener {
             }
         }
 
+
         val rView = findViewById<RecyclerView>(R.id.sensorItemRView)
         val adapter = SensorItemRViewAdapter(this, object: SensorItemRViewAdapter.OnItemClickListner{
             override fun onItemClick(item: SensorItemDataClass) {
@@ -51,26 +62,12 @@ class MainActivity : Activity() , SensorEventListener {
         rView.layoutManager = LinearLayoutManager(this)
         rView.adapter = adapter
 
-        adapter.setList(
-            mutableListOf(
-                SensorItemDataClass(
-                    fileName = "hogehoge",
-                    filePath = "1234",
-                    date = "2022/01/02"
-                ),
-                SensorItemDataClass(
-                    fileName = "hogehoge",
-                    filePath = "1234",
-                    date = "2022/02/03"
-                ),
-                SensorItemDataClass(
-                    fileName = "hogehoge",
-                    filePath = "1234",
-                    date = "2022/03/04"
-                )
+//        sensorDBUsecase.insertTestData()
 
-            )
-        )
+        sensorDBUsecase.getAll{
+            adapter.setList(it)
+        }
+
 
 
     }
