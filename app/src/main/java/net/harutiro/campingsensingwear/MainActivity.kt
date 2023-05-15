@@ -47,16 +47,19 @@ class MainActivity : Activity() , SensorEventListener {
         }
 
         val context = this.applicationContext
+        val activity = this
 
         val rView = findViewById<RecyclerView>(R.id.sensorItemRView)
         val adapter = SensorItemRViewAdapter(this, object: SensorItemRViewAdapter.OnItemClickListner{
             override fun onItemClick(item: SensorItemDataClass) {
                 Log.d("MainActivity","${item.date}button押した。")
                 webDavPostUsecase.post(item){
-//                    Toast.makeText( context, it, Toast.LENGTH_LONG).show()
+                    activity.runOnUiThread {
+                        Toast.makeText( context, it, Toast.LENGTH_LONG).show()
+                    }
                 }
 
-                Toast.makeText( context, "送信しました。", Toast.LENGTH_LONG).show();
+                Toast.makeText( context, "送信を開始", Toast.LENGTH_LONG).show();
             }
         })
         rView.layoutManager = LinearLayoutManager(this)
