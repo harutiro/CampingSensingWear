@@ -6,7 +6,9 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.WindowManager
+import android.widget.ProgressBar
 import android.widget.Switch
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -59,10 +61,12 @@ class MainActivity : Activity() , SensorEventListener {
                 webDavPostUsecase.post(item){
                     activity.runOnUiThread {
                         Toast.makeText( context, it, Toast.LENGTH_LONG).show()
+                        findViewById<ProgressBar>(R.id.progressBar).visibility = View.GONE
                     }
                 }
 
                 Toast.makeText( context, "送信を開始", Toast.LENGTH_LONG).show();
+                findViewById<ProgressBar>(R.id.progressBar).visibility = View.VISIBLE
             }
         })
         rView.layoutManager = LinearLayoutManager(this)
