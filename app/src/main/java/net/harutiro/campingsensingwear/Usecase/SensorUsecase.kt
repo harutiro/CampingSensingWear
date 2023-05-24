@@ -20,7 +20,6 @@ class SensorUsecase () {
     lateinit var sensorManager: SensorManager
     var accSensor: Sensor? = null
     var otherFileStorage : OtherFileStorage? = null
-    var dateUtils = DateUtils()
     val outputTextUsecase = OutputTextUsecase()
     var sensorDBUsecase :SensorDBUsecase? = null
 
@@ -35,7 +34,7 @@ class SensorUsecase () {
 
         outputTextUsecase.init(binding.sensorOutputText)
 
-        date = dateUtils.getNowDate().toString()
+        date = DateUtils.getNowDate()
 
         this.sensorDBUsecase = sensorDBUsecase
     }
@@ -51,8 +50,8 @@ class SensorUsecase () {
         val item = SensorItemDataClass(
             id = 0,
             filePath = otherFileStorage?.finalPath.toString(),
-            fileName = "${dateUtils.getNowDate().toString()}_PixelWache.csv",
-            date = dateUtils.getNowDate().toString()
+            fileName = "${DateUtils.getNowDate()}_PixelWache.csv",
+            date = DateUtils.getNowDate()
         )
 
         sensorDBUsecase?.insert(item)
@@ -65,7 +64,7 @@ class SensorUsecase () {
     fun getValue(event: SensorEvent){
         if (event.sensor.type == Sensor.TYPE_LINEAR_ACCELERATION) {
             val data = AccDataClass(
-                dateUtils.getTimeStamp(),
+                DateUtils.getTimeStamp(),
                 event.values[0],
                 event.values[1],
                 event.values[2]
