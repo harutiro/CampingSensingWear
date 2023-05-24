@@ -15,10 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import net.harutiro.campingsensingwear.Repository.Adapter.SensorItemRViewAdapter
 import net.harutiro.campingsensingwear.Entity.SensorItemDataClass
+import net.harutiro.campingsensingwear.Usecase.PermissionUsecase
 import net.harutiro.campingsensingwear.Usecase.SensorDBUsecase
 import net.harutiro.campingsensingwear.Usecase.SensorUsecase
 import net.harutiro.campingsensingwear.Usecase.WebDavPostUsecase
-import net.harutiro.campingsensingwear.Utils.PermissionUtils
 import net.harutiro.campingsensingwear.databinding.ActivityMainBinding
 
 class MainActivity : Activity() , SensorEventListener {
@@ -35,11 +35,16 @@ class MainActivity : Activity() , SensorEventListener {
         //スリープにさせないコード
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
+        //センサーのDBをみる
         val sensorDBUsecase = SensorDBUsecase()
-        sensorDBUsecase.init(this)
+        sensorDBUsecase.init(context = this)
 
-        val permissionUtils = PermissionUtils()
-        permissionUtils.requestPermissions(this,this)
+        //PermissionRequest
+        val permissionUsecase = PermissionUsecase()
+        permissionUsecase.permissionRequest(
+            activity = this,
+            permissions = permissionUsecase.permissionsFileWrite
+        )
 
         sensorUsecase.init(this , binding ,sensorDBUsecase)
 
