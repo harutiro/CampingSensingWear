@@ -13,7 +13,7 @@ import android.widget.Switch
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import net.harutiro.campingsensingwear.Adapter.SensorItemRViewAdapter
+import net.harutiro.campingsensingwear.Repository.Adapter.SensorItemRViewAdapter
 import net.harutiro.campingsensingwear.Entity.SensorItemDataClass
 import net.harutiro.campingsensingwear.Usecase.SensorDBUsecase
 import net.harutiro.campingsensingwear.Usecase.SensorUsecase

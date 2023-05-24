@@ -1,4 +1,4 @@
-package net.harutiro.campingsensingwear.Adapter
+package net.harutiro.campingsensingwear.Repository.Adapter
 
 import android.content.Context
 import android.view.LayoutInflater
