@@ -1,11 +1,11 @@
-package net.harutiro.campingsensingwear.Usecase
+package net.harutiro.campingsensingwear.Api
 
 import android.util.Log
 import net.harutiro.campingsensingwear.Entity.SensorItemDataClass
 import net.harutiro.campingsensingwear.Utils.ApiResult
 import net.harutiro.campingsensingwear.Utils.PostData
 
-class WebDavPostUsecase {
+class WebDavPostApi {
 
     val TAG = "WebDavPostUsecase"
 

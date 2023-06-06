@@ -17,6 +17,8 @@ class SensorDBUsecase {
     private lateinit var db:SensorDatabase
     lateinit var sensorItemDao:SensorItemsDao
 
+    val TAG = "SensorDBUsecase"
+
     fun init(context: Context){
         this.db = Room.databaseBuilder(
             context,
@@ -31,8 +33,8 @@ class SensorDBUsecase {
         val a = sensorItemDao.insert(item).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { Log.d("User", "INSERT 成功")},
-                { e -> Log.e("User", "INSERT 失敗", e) }
+                { Log.d(TAG, "INSERT 成功")},
+                { e -> Log.e(TAG, "INSERT 失敗 ${item.fileName}", e) }
             )
     }
 
@@ -44,7 +46,7 @@ class SensorDBUsecase {
                 {
                     func(it)
                 },
-                { e -> Log.e("UserView", "SELECT 失敗", e) }
+                { e -> Log.e(TAG, "SELECT 失敗", e) }
             )
     }
 
@@ -76,8 +78,8 @@ class SensorDBUsecase {
                 sensorItemDao.insert(it).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
-                        { Log.d("User", "INSERT 成功")},
-                        { e -> Log.e("User", "INSERT 失敗", e) }
+                        { Log.d(TAG, "INSERT 成功")},
+                        { e -> Log.e(TAG, "INSERT 失敗", e) }
                     )
             }
         }

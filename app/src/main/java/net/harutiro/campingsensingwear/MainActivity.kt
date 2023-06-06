@@ -1,9 +1,6 @@
 package net.harutiro.campingsensingwear
 
 import android.app.Activity
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -18,15 +15,16 @@ import net.harutiro.campingsensingwear.Entity.SensorItemDataClass
 import net.harutiro.campingsensingwear.Usecase.PermissionUsecase
 import net.harutiro.campingsensingwear.Usecase.SensorDBUsecase
 import net.harutiro.campingsensingwear.Usecase.SensorUsecase
-import net.harutiro.campingsensingwear.Usecase.WebDavPostUsecase
+import net.harutiro.campingsensingwear.Api.WebDavPostApi
+import net.harutiro.campingsensingwear.Utils.DateUtils
 import net.harutiro.campingsensingwear.databinding.ActivityMainBinding
 
-class MainActivity : Activity() , SensorEventListener {
+class MainActivity : Activity() {
 
     private lateinit var binding: ActivityMainBinding
 
     val sensorUsecase = SensorUsecase()
-    val webDavPostUsecase = WebDavPostUsecase()
+    val webDavPostApi = WebDavPostApi()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,16 +44,6 @@ class MainActivity : Activity() , SensorEventListener {
             permissions = permissionUsecase.permissionsFileWrite
         )
 
-        sensorUsecase.init(this , binding ,sensorDBUsecase)
-
-        findViewById<Switch>(R.id.sensorSwitch).setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked){
-                sensorUsecase.start(this)
-            }else{
-                sensorUsecase.stop(this)
-            }
-        }
-
         val context = this.applicationContext
         val activity = this
 
@@ -63,7 +51,7 @@ class MainActivity : Activity() , SensorEventListener {
         val adapter = SensorItemRViewAdapter(this, object: SensorItemRViewAdapter.OnItemClickListner{
             override fun onItemClick(item: SensorItemDataClass) {
                 Log.d("MainActivity","${item.date}button押した。")
-                webDavPostUsecase.post(item){
+                webDavPostApi.post(item){
                     activity.runOnUiThread {
                         Toast.makeText( context, it, Toast.LENGTH_LONG).show()
                         findViewById<ProgressBar>(R.id.progressBar).visibility = View.GONE
@@ -77,25 +65,41 @@ class MainActivity : Activity() , SensorEventListener {
         rView.layoutManager = LinearLayoutManager(this)
         rView.adapter = adapter
 
-//        sensorDBUsecase.insertTestData()
+        //追加したいセンサーを追加
+        sensorUsecase.addSensor(this)
 
-        sensorDBUsecase.getAll{
-            adapter.setList(it)
+        findViewById<Switch>(R.id.sensorSwitch).setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked){
+                sensorUsecase.start("Pixel7")
+            }else{
+                sensorUsecase.stop()
+
+                sensorDBUsecase.getAll{ sensorSaveList ->
+                    val list = sensorSaveList.toMutableList()
+                    list.sortBy{
+                        DateUtils.stringToDate(it.date)
+                    }
+                    list.reverse()
+                    adapter.setList(list)
+                }
+            }
         }
 
+        sensorDBUsecase.getAll{ sensorSaveList ->
+            val list = sensorSaveList.toMutableList()
+            list.sortBy{
+                DateUtils.stringToDate(it.date)
+            }
+            list.reverse()
+            adapter.setList(list)
+        }
 
-
-    }
-
-    override fun onSensorChanged(event: SensorEvent) {
-        sensorUsecase.getValue(event)
-    }
-
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
     }
 
     override fun onPause() {
         super.onPause()
-        sensorUsecase.stop(this)
+        if(sensorUsecase.sensorStartFlag){
+            sensorUsecase.stop()
+        }
     }
 }

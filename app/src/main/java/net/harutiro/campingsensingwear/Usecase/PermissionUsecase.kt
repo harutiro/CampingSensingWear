@@ -15,7 +15,8 @@ class PermissionUsecase {
     val permissionsFileWrite = arrayOf(
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.MANAGE_EXTERNAL_STORAGE
+        Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+        Manifest.permission.BODY_SENSORS,
     )
 
     fun permissionRequest(activity:Activity,permissions:Array<String>){

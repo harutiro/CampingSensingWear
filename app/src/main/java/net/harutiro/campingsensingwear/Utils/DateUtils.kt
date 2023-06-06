@@ -12,6 +12,14 @@ class DateUtils {
             return df.format(date)
         }
 
+        fun stringToDate(dateString: String):Long{
+            val df = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")
+            val date = df.parse(dateString)
+            val absoluteTime = date.time
+
+            return absoluteTime
+        }
+
         fun getTimeStamp():Long {
             return System.currentTimeMillis()
         }
