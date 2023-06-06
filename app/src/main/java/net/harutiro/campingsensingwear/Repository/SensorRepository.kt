@@ -1,6 +1,9 @@
 package net.harutiro.campingsensingwear.Repository
 
 import android.util.Log
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import net.harutiro.campingsensingwear.Repository.Sensor.SensorBase
 
 
@@ -17,9 +20,16 @@ class SensorRepository {
     }
 
     fun sensorStop(sensors: MutableList<SensorBase>) {
-        for (sensor in sensors) {
-            sensor.stop()
-        }
+        val a = Completable.concat(sensors.map { sensor ->
+            Completable.defer { sensor.stop() }
+                .subscribeOn(Schedulers.io())
+        })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { Log.d(TAG, "センサー停止 成功") },
+                { e -> Log.e(TAG, "センサー停止 失敗", e) }
+            )
     }
 
 }

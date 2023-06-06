@@ -5,6 +5,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import io.reactivex.Completable
 import net.harutiro.campingsensingwear.Entity.SensorItemDataClass
 import net.harutiro.campingsensingwear.Usecase.SensorDBUsecase
 import net.harutiro.campingsensingwear.Utils.DateUtils
@@ -35,7 +36,7 @@ abstract class SensorBase(val context: Context): SensorEventListener {
         sensorManager.registerListener(this, PreSensor, SensorManager.SENSOR_DELAY_UI)
     }
 
-    fun stop() {
+    fun stop(): Completable? {
         otherFileStorage?.stop()
         sensorManager.unregisterListener(this)
         val item = SensorItemDataClass(
@@ -44,7 +45,7 @@ abstract class SensorBase(val context: Context): SensorEventListener {
             fileName = "${DateUtils.getNowDate()}_${sensorName}_PixelWache.csv",
             date = DateUtils.getNowDate()
         )
-        sensorDBUsecase?.insert(item)
+        return sensorDBUsecase?.insert(item)
     }
 
     override fun onSensorChanged(event: SensorEvent) {

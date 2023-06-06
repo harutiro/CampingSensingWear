@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.room.Room
+import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
@@ -29,13 +30,12 @@ class SensorDBUsecase {
         this.sensorItemDao = this.db.sensorItemDao()
     }
 
-    fun insert(item:SensorItemDataClass){
-        val a = sensorItemDao.insert(item).subscribeOn(Schedulers.io())
+    fun insert(item:SensorItemDataClass): Completable {
+        return Completable.fromAction { sensorItemDao.insert(item) }
+            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { Log.d(TAG, "INSERT 成功")},
-                { e -> Log.e(TAG, "INSERT 失敗 ${item.fileName}", e) }
-            )
+            .doOnComplete { Log.d(TAG, "INSERT 成功") }
+            .doOnError { e -> Log.e(TAG, "INSERT 失敗 ${item.fileName}", e) }
     }
 
     fun getAll(func:(List<SensorItemDataClass>) -> Unit){
