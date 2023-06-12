@@ -1,6 +1,7 @@
 package net.harutiro.campingsensingwear
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -8,8 +9,6 @@ import android.view.WindowManager
 import android.widget.ProgressBar
 import android.widget.Switch
 import android.widget.Toast
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.wear.widget.WearableLinearLayoutManager
 import androidx.wear.widget.WearableRecyclerView
 import net.harutiro.campingsensingwear.Repository.Adapter.SensorItemRViewAdapter
@@ -18,7 +17,6 @@ import net.harutiro.campingsensingwear.Usecase.PermissionUsecase
 import net.harutiro.campingsensingwear.Usecase.SensorDBUsecase
 import net.harutiro.campingsensingwear.Usecase.SensorUsecase
 import net.harutiro.campingsensingwear.Api.WebDavPostApi
-import net.harutiro.campingsensingwear.Utils.DateUtils
 import net.harutiro.campingsensingwear.View.CustomScrollingLayoutCallback
 import net.harutiro.campingsensingwear.databinding.ActivityMainBinding
 
@@ -65,6 +63,21 @@ class MainActivity : Activity() {
 
                 Toast.makeText( context, "送信を開始", Toast.LENGTH_SHORT).show();
                 findViewById<ProgressBar>(R.id.progressBar).visibility = View.VISIBLE
+            }
+
+            override fun onLongItemClick(item: SensorItemDataClass) {
+                AlertDialog.Builder(this@MainActivity) // FragmentではActivityを取得して生成
+                    .setTitle("${item.fileName}を消去します")
+                    .setMessage("本当に消しても大丈夫ですか？")
+                    .setPositiveButton("OK") { _, _ ->
+                        sensorDBUsecase.deleteItem(item)
+                        Toast.makeText(context, "消去しました。", Toast.LENGTH_SHORT).show();
+
+                    }
+                    .setNegativeButton("No") { _, _ ->
+                        Toast.makeText(context, "取り消しました。", Toast.LENGTH_SHORT).show();
+                    }
+                    .show()
             }
         })
         rView.apply {

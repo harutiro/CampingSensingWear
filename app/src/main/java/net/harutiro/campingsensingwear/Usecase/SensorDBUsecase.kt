@@ -8,7 +8,9 @@ import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.harutiro.campingsensingwear.Entity.SensorItemDataClass
 import net.harutiro.campingsensingwear.Entity.room.SensorDatabase
@@ -52,6 +54,13 @@ class SensorDBUsecase {
             )
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
+    fun deleteItem(item:SensorItemDataClass){
+        GlobalScope.launch {
+            sensorItemDao.delete(item)
+        }
+    }
+
     fun sortDay(getList :List<SensorItemDataClass>): MutableList<SensorItemDataClass> {
 
         val list = getList.toMutableList()
@@ -63,42 +72,4 @@ class SensorDBUsecase {
         return list
 
     }
-
-    fun insertTestData(){
-        val list = mutableListOf(
-            SensorItemDataClass(
-                id = 0,
-                fileName = "hogehoge",
-                filePath = "1234",
-                date = "2022/01/02"
-            ),
-            SensorItemDataClass(
-                id = 1,
-                fileName = "hogehoge",
-                filePath = "1234",
-                date = "2022/02/03"
-            ),
-            SensorItemDataClass(
-                id = 2,
-                fileName = "hogehoge",
-                filePath = "1234",
-                date = "2022/03/04"
-            )
-
-        )
-
-        list.forEach{
-            CoroutineScope(Dispatchers.IO).launch {
-                sensorItemDao.insert(it).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                        { Log.d(TAG, "INSERT 成功")},
-                        { e -> Log.e(TAG, "INSERT 失敗", e) }
-                    )
-            }
-        }
-
-
-    }
-
 }

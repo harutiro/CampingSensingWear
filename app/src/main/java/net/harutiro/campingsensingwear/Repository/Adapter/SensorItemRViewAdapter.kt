@@ -9,8 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import net.harutiro.campingsensingwear.Entity.SensorItemDataClass
 import net.harutiro.campingsensingwear.R
 
-class SensorItemRViewAdapter(private val context: Context, private val listener: OnItemClickListner):
-    RecyclerView.Adapter<SensorItemRViewAdapter.ViewHolder>() {
+class SensorItemRViewAdapter(
+    private val context: Context,
+    private val listener: OnItemClickListner,
+): RecyclerView.Adapter<SensorItemRViewAdapter.ViewHolder>() {
 
     //リサイクラービューに表示するリストを宣言する
     val items: MutableList<SensorItemDataClass> = mutableListOf()
@@ -34,6 +36,11 @@ class SensorItemRViewAdapter(private val context: Context, private val listener:
             listener.onItemClick(item)
         }
 
+        holder.sendButton.setOnLongClickListener{
+            listener.onLongItemClick(item)
+            true
+        }
+
         holder.sendButton.text = item.fileName
     }
 
@@ -45,6 +52,7 @@ class SensorItemRViewAdapter(private val context: Context, private val listener:
     // RecyclerViewの要素をタップするためのもの
     interface OnItemClickListner{
         fun onItemClick(item:SensorItemDataClass)
+        fun onLongItemClick(item:SensorItemDataClass)
     }
 
     fun reView(){
