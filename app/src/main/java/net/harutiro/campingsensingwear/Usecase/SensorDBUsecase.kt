@@ -31,7 +31,7 @@ class SensorDBUsecase {
     }
 
     fun insert(item:SensorItemDataClass): Completable {
-        return Completable.fromAction { sensorItemDao.insert(item) }
+        return sensorItemDao.insert(item)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnComplete { Log.d(TAG, "INSERT 成功") }
