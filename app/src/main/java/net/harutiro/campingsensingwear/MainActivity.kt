@@ -81,15 +81,15 @@ class MainActivity : Activity() {
             if (isChecked){
                 sensorUsecase.start("Pixel7")
             }else{
-                sensorUsecase.stop()
-
-                sensorDBUsecase.getAll{ sensorSaveList ->
-                    val list = sensorSaveList.toMutableList()
-                    list.sortBy{
-                        DateUtils.stringToDate(it.date)
+                sensorUsecase.stop(){
+                    sensorDBUsecase.getAll{ sensorSaveList ->
+                        val list = sensorSaveList.toMutableList()
+                        list.sortBy{
+                            DateUtils.stringToDate(it.date)
+                        }
+                        list.reverse()
+                        adapter.setList(list)
                     }
-                    list.reverse()
-                    adapter.setList(list)
                 }
             }
         }
@@ -109,7 +109,9 @@ class MainActivity : Activity() {
     override fun onPause() {
         super.onPause()
         if(sensorUsecase.sensorStartFlag){
-            sensorUsecase.stop()
+            sensorUsecase.stop(){
+
+            }
         }
     }
 }

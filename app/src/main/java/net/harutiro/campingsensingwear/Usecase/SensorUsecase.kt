@@ -26,8 +26,11 @@ class SensorUsecase () {
         sensorRepository.sensorStart(fileName,targetSensors)
         sensorStartFlag = true
     }
-    fun stop(){
-        sensorRepository.sensorStop(targetSensors)
+    fun stop(onStopped:() -> Unit){
+        sensorRepository.sensorStop(
+            sensors = targetSensors,
+            onStopped = onStopped
+        )
         sensorStartFlag = false
     }
 

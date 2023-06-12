@@ -19,7 +19,7 @@ class SensorRepository {
         }
     }
 
-    fun sensorStop(sensors: MutableList<SensorBase>) {
+    fun sensorStop(sensors: MutableList<SensorBase>, onStopped:() -> Unit) {
         val a = Completable.concat(sensors.map { sensor ->
             Completable.defer { sensor.stop() }
                 .subscribeOn(Schedulers.io())
@@ -27,8 +27,14 @@ class SensorRepository {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                { Log.d(TAG, "センサー停止 成功") },
-                { e -> Log.e(TAG, "センサー停止 失敗", e) }
+                {
+                    Log.d(TAG, "センサー停止 成功")
+                    //センサーが終了した時にMainActivityに伝える。
+                    onStopped()
+                },
+                { e ->
+                    Log.e(TAG, "センサー停止 失敗", e)
+                }
             )
     }
 
