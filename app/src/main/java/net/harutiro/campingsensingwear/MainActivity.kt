@@ -10,6 +10,8 @@ import android.widget.Switch
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.wear.widget.WearableLinearLayoutManager
+import androidx.wear.widget.WearableRecyclerView
 import net.harutiro.campingsensingwear.Repository.Adapter.SensorItemRViewAdapter
 import net.harutiro.campingsensingwear.Entity.SensorItemDataClass
 import net.harutiro.campingsensingwear.Usecase.PermissionUsecase
@@ -17,6 +19,7 @@ import net.harutiro.campingsensingwear.Usecase.SensorDBUsecase
 import net.harutiro.campingsensingwear.Usecase.SensorUsecase
 import net.harutiro.campingsensingwear.Api.WebDavPostApi
 import net.harutiro.campingsensingwear.Utils.DateUtils
+import net.harutiro.campingsensingwear.View.CustomScrollingLayoutCallback
 import net.harutiro.campingsensingwear.databinding.ActivityMainBinding
 
 class MainActivity : Activity() {
@@ -25,6 +28,8 @@ class MainActivity : Activity() {
 
     val sensorUsecase = SensorUsecase()
     val webDavPostApi = WebDavPostApi()
+
+    val TAG = "MainActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +52,7 @@ class MainActivity : Activity() {
         val context = this.applicationContext
         val activity = this
 
-        val rView = findViewById<RecyclerView>(R.id.sensorItemRView)
+        val rView = findViewById<WearableRecyclerView>(R.id.sensorItemRView)
         val adapter = SensorItemRViewAdapter(this, object: SensorItemRViewAdapter.OnItemClickListner{
             override fun onItemClick(item: SensorItemDataClass) {
                 Log.d("MainActivity","${item.date}button押した。")
@@ -62,8 +67,12 @@ class MainActivity : Activity() {
                 findViewById<ProgressBar>(R.id.progressBar).visibility = View.VISIBLE
             }
         })
-        rView.layoutManager = LinearLayoutManager(this)
-        rView.adapter = adapter
+        rView.apply {
+            isEdgeItemsCenteringEnabled = true
+//            layoutManager = LinearLayoutManager(this@MainActivity)
+            layoutManager = WearableLinearLayoutManager(this@MainActivity, CustomScrollingLayoutCallback())
+            this.adapter = adapter
+        }
 
         //追加したいセンサーを追加
         sensorUsecase.addSensor(this)
@@ -92,6 +101,7 @@ class MainActivity : Activity() {
             }
             list.reverse()
             adapter.setList(list)
+            Log.d(TAG,list.toString())
         }
 
     }
