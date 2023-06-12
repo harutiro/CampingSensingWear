@@ -58,12 +58,12 @@ class MainActivity : Activity() {
                 Log.d("MainActivity","${item.date}button押した。")
                 webDavPostApi.post(item){
                     activity.runOnUiThread {
-                        Toast.makeText( context, it, Toast.LENGTH_LONG).show()
+                        Toast.makeText( context, it, Toast.LENGTH_SHORT).show()
                         findViewById<ProgressBar>(R.id.progressBar).visibility = View.GONE
                     }
                 }
 
-                Toast.makeText( context, "送信を開始", Toast.LENGTH_LONG).show();
+                Toast.makeText( context, "送信を開始", Toast.LENGTH_SHORT).show();
                 findViewById<ProgressBar>(R.id.progressBar).visibility = View.VISIBLE
             }
         })
