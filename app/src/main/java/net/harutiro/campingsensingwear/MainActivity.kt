@@ -83,25 +83,14 @@ class MainActivity : Activity() {
             }else{
                 sensorUsecase.stop(){
                     sensorDBUsecase.getAll{ sensorSaveList ->
-                        val list = sensorSaveList.toMutableList()
-                        list.sortBy{
-                            DateUtils.stringToDate(it.date)
-                        }
-                        list.reverse()
-                        adapter.setList(list)
+                        adapter.setList(sensorSaveList)
                     }
                 }
             }
         }
 
         sensorDBUsecase.getAll{ sensorSaveList ->
-            val list = sensorSaveList.toMutableList()
-            list.sortBy{
-                DateUtils.stringToDate(it.date)
-            }
-            list.reverse()
-            adapter.setList(list)
-            Log.d(TAG,list.toString())
+            adapter.setList(sensorSaveList)
         }
 
     }

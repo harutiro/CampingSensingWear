@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import net.harutiro.campingsensingwear.Entity.SensorItemDataClass
 import net.harutiro.campingsensingwear.Entity.room.SensorDatabase
 import net.harutiro.campingsensingwear.Entity.room.SensorItemsDao
+import net.harutiro.campingsensingwear.Utils.DateUtils
 
 class SensorDBUsecase {
     private lateinit var db:SensorDatabase
@@ -43,11 +44,24 @@ class SensorDBUsecase {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-                {
-                    func(it)
+                {getList ->
+                    val list = sortDay(getList)
+                    func(list)
                 },
                 { e -> Log.e(TAG, "SELECT 失敗", e) }
             )
+    }
+
+    fun sortDay(getList :List<SensorItemDataClass>): MutableList<SensorItemDataClass> {
+
+        val list = getList.toMutableList()
+        list.sortBy{
+            DateUtils.stringToDate(it.date)
+        }
+        list.reverse()
+
+        return list
+
     }
 
     fun insertTestData(){
