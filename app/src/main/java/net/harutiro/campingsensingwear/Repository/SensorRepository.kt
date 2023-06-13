@@ -21,8 +21,7 @@ class SensorRepository {
 
     fun sensorStop(sensors: MutableList<SensorBase>, onStopped:() -> Unit) {
         val a = Completable.concat(sensors.map { sensor ->
-            Completable.defer { sensor.stop() }
-                .subscribeOn(Schedulers.io())
+            sensor.stop()
         })
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
