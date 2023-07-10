@@ -5,6 +5,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.util.Log
 import io.reactivex.Completable
 import net.harutiro.campingsensingwear.Entity.SensorItemDataClass
 import net.harutiro.campingsensingwear.Usecase.SensorDBUsecase
@@ -18,6 +19,8 @@ abstract class SensorBase(val context: Context): SensorEventListener {
     var otherFileStorage: OtherFileStorage? = null
     var sensorDBUsecase : SensorDBUsecase? = null
 
+    var samplingFrequency = -1.0
+
     abstract val sensorType:Int
     abstract val sensorName:String
 
@@ -29,11 +32,13 @@ abstract class SensorBase(val context: Context): SensorEventListener {
         sensorDBUsecase?.init(context = context)
     }
 
-    fun start(filename: String) {
+    fun start(filename: String , samplingFrequency:Double) {
         queue.clear()
         otherFileStorage = OtherFileStorage(context, "${filename}_${sensorName}", queue)
         otherFileStorage?.saveAtBatch()
         sensorManager.registerListener(this, PreSensor, SensorManager.SENSOR_DELAY_UI)
+
+        this.samplingFrequency = samplingFrequency
     }
 
     fun stop(): Completable? {
@@ -46,6 +51,23 @@ abstract class SensorBase(val context: Context): SensorEventListener {
             date = DateUtils.getNowDate()
         )
         return sensorDBUsecase?.insert(item)
+    }
+
+    var nowTime:Long = 0
+    fun addQueue(sensorName:String,data: String,timeStamp:Long) {
+
+        Log.d(sensorName, "差分:${timeStamp - nowTime}")
+        Log.d(sensorName,"周波数:${frequency2second(samplingFrequency) * 1000}")
+
+        if (timeStamp - nowTime > frequency2second(samplingFrequency) * 1000) {
+            queue.add(data)
+            nowTime = timeStamp
+            Log.d(sensorName, data)
+        }
+    }
+
+    fun frequency2second(frequency:Double):Double{
+        return 1.0/frequency
     }
 
     override fun onSensorChanged(event: SensorEvent) {

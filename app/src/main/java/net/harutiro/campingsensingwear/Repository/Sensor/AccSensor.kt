@@ -21,8 +21,14 @@ class AccSensor(context: Context): SensorBase(context) {
         val x = event.values[0]
         val y = event.values[1]
         val z = event.values[2]
-        queue.add("${DateUtils.getTimeStamp()},${x},${y},${z}")
 
-        Log.d(TAG,"${DateUtils.getTimeStamp()},${x},${y},${z}")
+        val time = DateUtils.getTimeStamp()
+
+        val data = "${time},${x},${y},${z}"
+        addQueue(
+            sensorName = sensorName,
+            data = data,
+            timeStamp = time
+        )
     }
 }

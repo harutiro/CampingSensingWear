@@ -11,10 +11,13 @@ class SensorRepository {
 
     val TAG = "SensorRepository"
 
-    fun sensorStart(fileName:String,sensors: MutableList<SensorBase>) {
+    fun sensorStart(fileName:String,sensors: MutableList<SensorBase>,samplingFrequency:Double) {
         for (sensor in sensors) {
             sensor.init()
-            sensor.start(fileName)
+            sensor.start(
+                filename = fileName,
+                samplingFrequency = samplingFrequency
+            )
             Log.d(TAG, "fileName = ${fileName}")
         }
     }

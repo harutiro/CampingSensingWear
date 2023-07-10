@@ -10,11 +10,18 @@ class HartRateSensor(context: Context) : SensorBase(context) {
     override val sensorType = Sensor.TYPE_HEART_RATE
     override val sensorName = "HartRate"
 
-    val TAG = "HartRateSensor"
+    val myTAG = "HartRateSensor"
 
     override fun onSensorChanged(event: SensorEvent) {
         val hartRate = event.values[0]
-        super.queue.add(DateUtils.getTimeStamp().toString().plus(",").plus(hartRate))
-        Log.d(TAG,"hartRate:$hartRate")
+
+        val time = DateUtils.getTimeStamp()
+        val data = "${time},${hartRate}"
+
+        addQueue(
+            sensorName = sensorName,
+            data = data,
+            timeStamp = time
+        )
     }
 }

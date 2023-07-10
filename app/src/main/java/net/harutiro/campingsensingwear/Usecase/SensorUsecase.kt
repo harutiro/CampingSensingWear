@@ -15,6 +15,10 @@ class SensorUsecase () {
 
     var sensorStartFlag = false
 
+    //TODO: 画面から設定できるようにする
+    //おそらく1~20Hzくらいが妥当少数点も一応OK
+    val samplingFrequency:Double = 5.0
+
     // 読み込みたいセンサーデータを保存
     fun addSensor(context: Context){
         targetSensors.add(AccSensor(context))
@@ -23,7 +27,11 @@ class SensorUsecase () {
     }
 
     fun start(fileName:String){
-        sensorRepository.sensorStart(fileName,targetSensors)
+        sensorRepository.sensorStart(
+            fileName = fileName,
+            sensors = targetSensors,
+            samplingFrequency = samplingFrequency
+        )
         sensorStartFlag = true
     }
     fun stop(onStopped:() -> Unit){

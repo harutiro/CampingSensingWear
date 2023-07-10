@@ -11,12 +11,14 @@ import android.widget.Switch
 import android.widget.Toast
 import androidx.wear.widget.WearableLinearLayoutManager
 import androidx.wear.widget.WearableRecyclerView
+import com.google.android.gms.common.util.DataUtils
 import net.harutiro.campingsensingwear.Repository.Adapter.SensorItemRViewAdapter
 import net.harutiro.campingsensingwear.Entity.SensorItemDataClass
 import net.harutiro.campingsensingwear.Usecase.PermissionUsecase
 import net.harutiro.campingsensingwear.Usecase.SensorDBUsecase
 import net.harutiro.campingsensingwear.Usecase.SensorUsecase
 import net.harutiro.campingsensingwear.Api.WebDavPostApi
+import net.harutiro.campingsensingwear.Utils.DateUtils
 import net.harutiro.campingsensingwear.View.CustomScrollingLayoutCallback
 import net.harutiro.campingsensingwear.databinding.ActivityMainBinding
 
@@ -92,7 +94,7 @@ class MainActivity : Activity() {
 
         findViewById<Switch>(R.id.sensorSwitch).setOnCheckedChangeListener { _, isChecked ->
             if (isChecked){
-                sensorUsecase.start("Pixel7")
+                sensorUsecase.start("Pixel7" + DateUtils.getNowDate())
             }else{
                 sensorUsecase.stop(){
                     sensorDBUsecase.getAll{ sensorSaveList ->
