@@ -17,7 +17,7 @@ class SensorUsecase () {
 
     //TODO: 画面から設定できるようにする
     //おそらく1~20Hzくらいが妥当少数点も一応OK
-    val samplingFrequency:Double = 5.0
+    val samplingFrequency:Double = 2.0
 
     // 読み込みたいセンサーデータを保存
     fun addSensor(context: Context){
